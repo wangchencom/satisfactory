@@ -33,6 +33,8 @@ mem=`expr $virMem + $pyhMem`
 cpuNum=`grep -c "model name" /proc/cpuinfo`
 #获取本机ip地址
 ip=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
+#对文件进行覆写
+echo > $opath 2>&1
 # 对内存大小进行判断
 if [ $mem -gt 6291456 ] 
 then
