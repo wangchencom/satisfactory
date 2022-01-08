@@ -21,6 +21,8 @@ root_need
 ########
 #配置检测
 ########
+#设置log输出地址
+opath=/home/satisfactory_output.log
 # 获取物理内存总量
 pyhMem=`free | grep Mem | awk '{print $2}'`
 #获取虚拟内存总量
