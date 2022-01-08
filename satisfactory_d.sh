@@ -37,6 +37,7 @@ steam_add(){
     egrep "^steam" /etc/passwd >& /dev/null
     if [ $? -ne 0 ]
     then
+    echo "创建账户steam"
         useradd -m steam
     fi
 }
