@@ -51,6 +51,8 @@ root_need
 ########
 #配置检测
 ########
+
+
 #打印信息输出文件
 opath=/home/satisfactory_output.txt
 # 获取物理内存总量
@@ -63,6 +65,7 @@ mem=`expr $virMem + $pyhMem`
 cpuNum=`grep -c "model name" /proc/cpuinfo`
 #获取本机ip地址
 ip=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
+#对文件进行覆写
 echo > $opath 2>&1
 # 对内存大小进行判断
 if [ $mem -gt 6291456 ] 
@@ -100,15 +103,16 @@ then
     fi
 fi
 
-echo "接下来将安装steamCMD以及游戏所需环境，3秒后开始安装"
+echo "接下来将安装steamCMD以及游戏所需环境"
 sleep 3s
 
 #安装steamCMD以及游戏所需环境
+echo "安装steamCMD以及游戏所需环境" >> $opath 2>&1
 environment_get >> $opath 2>&1
 
 
 echo "steamCMD以及游戏所需环境安装完成！"
-echo "接下来将安装steamCMD，3秒后开始安装"
+echo "接下来将安装steamCMD"
 sleep 3s
 
 #此处为添加steam用户
@@ -117,29 +121,32 @@ steam_add
 #进行steamCMD的安装
 fileDir="/home/steam"
 #新建游戏存放目录
-su - steam -c "mkdir ~/steamcmd" >> $opath 2>&1
+su - steam -c "mkdir ~/steamcmd" 
 #下载文件
-su - steam -c "wget -P ~/steamcmd https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" >> $opath 2>&1
+su - steam -c "wget -P ~/steamcmd https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" 
 #解压文件
-su - steam -c "tar -zxvf ~/steamcmd/steamcmd_linux.tar.gz -C ~/steamcmd" >> $opath 2>&1
+su - steam -c "tar -zxvf ~/steamcmd/steamcmd_linux.tar.gz -C ~/steamcmd" 
 #删除下载的压缩包
-su - steam -c "rm -f ~/steamcmd/steamcmd_linux.tar.gz" >> $opath 2>&1
+su - steam -c "rm -f ~/steamcmd/steamcmd_linux.tar.gz" 
 #运行steamCMD安装，并将信息输出到
+echo "运行steamCMD安装，并将信息输出到" >> $opath 2>&1
 su - steam -c "~/steamcmd/steamcmd.sh +quit" >> $opath 2>&1
 
-mkdir -p /home/steam/.steam/sdk64/ >> $opath 2>&1
+mkdir -p /home/steam/.steam/sdk64/ 
 
-ln -s /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/ >> $opath 2>&1
+ln -s /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/ 
 
 echo "steamCMD安装完成！"
 echo "接下来将安装幸福工厂，3秒后开始安装"
 sleep 3s
 
+echo "安装两个环境" >> $opath 2>&1
 apt install libsdl2-2.0-0:i386 -y >> $opath 2>&1
 
+echo "幸福工厂安装" >> $opath 2>&1
 su - steam -c "~/steamcmd/steamcmd.sh +force_install_dir ~/SatisfactoryDedicatedServer +login anonymous +app_update 1690800 validate +quit" >> $opath 2>&1
 
-su - steam -c "mkdir -p ~/.config/Epic/FactoryGame/Saved/SaveGames/server" >> $opath 2>&1
+su - steam -c "mkdir -p ~/.config/Epic/FactoryGame/Saved/SaveGames/server" 
 
 su - steam -c "echo "存档位置为："`pwd`"
 echo "创建启动脚本"
@@ -159,7 +166,7 @@ export LD_LIBRARY_PATH=\$templdpath
 
 EOF
 
-chmod +x $fileDir/SatisfactoryDedicatedServer/start_server.sh >> $opath 2>&1
+chmod +x $fileDir/SatisfactoryDedicatedServer/start_server.sh
 
 echo "创建服务，使之开机运行！"
 cat>/etc/systemd/system/satisfactory.service<<EOF
@@ -180,8 +187,12 @@ ExecStart=/home/steam/SatisfactoryDedicatedServer/start_server.sh
 WantedBy=multi-user.target
 EOF 
 
+echo "开机启动服务" >> $opath 2>&1
+
 systemctl enable satisfactory.service >> $opath 2>&1
-systemctl start satisfactory.service >> $opath 2>&1
+
+systemctl start satisfactory.service 
+
 echo "安装完成！游戏服务已经启动！"
 echo "安装目录为："$fileDir
 echo "可以使用命令进行操作："
