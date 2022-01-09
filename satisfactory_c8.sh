@@ -9,7 +9,35 @@ root_need() {
         exit 1
     fi
 }
-
+#交换分区函数
+swap_make() {
+    #使用dd命令创建名为swapfile 的swap交换文件
+    dd  if=/dev/zero  of=/var/swapfile  bs=1024  count=4194304 
+    #对交换文件格式化并转换为swap分区
+    mkswap  /var/swapfile
+    #添加权限
+    chmod -R 0600 /var/swapfile
+    #挂载并激活分区
+    swapon   /var/swapfile
+    #修改 fstab 配置，设置开机自动挂载该分区
+    echo  "/var/swapfile   swap  swap  defaults  0  0" >>  /etc/fstab
+}
+#安装所需环境
+environment_get(){
+    yum update -y
+    yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y
+    yum install glibc.i686 libstdc++.i686 libcurl.i686 screen -y
+    yum install SDL2.i686 SDL2.x86_64 -y 
+}
+#判断steam用户函数
+steam_add(){
+    egrep "^steam" /etc/passwd >& /dev/null
+    if [ $? -ne 0 ]
+    then
+    echo "创建账户steam"
+        useradd -m steam
+    fi
+}
 
 ########
 ########
@@ -21,6 +49,8 @@ root_need
 ########
 #配置检测
 ########
+#设置log输出地址
+opath=/home/satisfactory_output.log
 # 获取物理内存总量
 pyhMem=`free | grep Mem | awk '{print $2}'`
 #获取虚拟内存总量
@@ -31,6 +61,8 @@ mem=`expr $virMem + $pyhMem`
 cpuNum=`grep -c "model name" /proc/cpuinfo`
 #获取本机ip地址
 ip=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
+#对文件进行覆写，置空
+:> $opath
 # 对内存大小进行判断
 if [ $mem -gt 6291456 ] 
 then
@@ -61,61 +93,59 @@ then
     read -r tmpNum
     if [ $tmpNum == 1 ]
     then
-        echo "接下来将会进行大量文件读写来创建swap分区，服务器响应可能会有卡顿！"
-        #使用dd命令创建名为swapfile 的swap交换文件
-        dd  if=/dev/zero  of=/var/swapfile  bs=1024  count=4194304 
-        #对交换文件格式化并转换为swap分区
-        mkswap  /var/swapfile
-        #添加权限
-        chmod -R 0600 /var/swapfile
-        #挂载并激活分区
-        swapon   /var/swapfile
-        #修改 fstab 配置，设置开机自动挂载该分区
-        echo  "/var/swapfile   swap  swap  defaults  0  0" >>  /etc/fstab
+        echo "开始创建swap分区"
+        #这里会有输出信息
+        echo "swap分区开启输出信息：" >> $opath 2>&1
+        swap_make  >> $opath 2>&1
         echo "虚拟内存配置完成！"
     fi
 fi
 
-echo "接下来将安装steamCMD以及游戏所需环境，3秒后开始安装"
-sleep 3s
+echo "开始安装steamCMD以及游戏所需环境"
 
 #安装steamCMD以及游戏所需环境
 
-yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y
-yum install glibc.i686 libstdc++.i686 libcurl.i686 screen -y
+#这里会有输出信息
+echo "steamcmd 及游戏环境安装输出：" >> $opath 2>&1
+environment_get >> $opath 2>&1
 
 echo "steamCMD以及游戏所需环境安装完成！"
-echo "接下来将安装steamCMD，3秒后开始安装"
-sleep 3s
+echo "开始安装steamCMD"
 
-useradd -m steam
+steam_add
 
 #进行steamCMD的安装
 fileDir="/home/steam"
 #新建游戏存放目录
-su - steam -c "mkdir ~/steamcmd"
+if [ ! -d /home/steam/steamcmd  ];then
+    su - steam -c "mkdir ~/steamcmd"
+fi
 #下载文件
-su - steam -c "wget -P ~/steamcmd https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
+#这里有打印信息
+su - steam -c "wget -P ~/steamcmd https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" >> $opath 2>&1
 #解压文件
-su - steam -c "tar -zxvf ~/steamcmd/steamcmd_linux.tar.gz -C ~/steamcmd"
+su - steam -c "tar -zxvf ~/steamcmd/steamcmd_linux.tar.gz -C ~/steamcmd" >> $opath 2>&1
 #删除下载的压缩包
 su - steam -c "rm -f ~/steamcmd/steamcmd_linux.tar.gz"
 #运行steamCMD安装
-su - steam -c "~/steamcmd/steamcmd.sh +quit"
+#这里有打印信息
+su - steam -c "~/steamcmd/steamcmd.sh +quit" >> $opath 2>&1
 
-mkdir -p /home/steam/.steam/sdk64/
+if [ ! -d /home/steam/.steam/sdk64/  ];then
+    mkdir -p /home/steam/.steam/sdk64/
+fi
 
-ln -s /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/
+ln -s /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/ >> $opath 2>&1
 
 echo "steamCMD安装完成！"
-echo "接下来将安装幸福工厂，3秒后开始安装"
-sleep 3s
+echo "开始安装幸福工厂"
 
-yum -y install SDL2.i686 SDL2.x86_64 -y
+#这里有输出信息
+su - steam -c "~/steamcmd/steamcmd.sh +force_install_dir ~/SatisfactoryDedicatedServer +login anonymous +app_update 1690800 validate +quit" >> $opath 2>&1
 
-su - steam -c "~/steamcmd/steamcmd.sh +force_install_dir ~/SatisfactoryDedicatedServer +login anonymous +app_update 1690800 validate +quit"
-
-su - steam -c "mkdir -p ~/.config/Epic/FactoryGame/Saved/SaveGames/server"
+if [ ! -d /home/steam/.config/Epic/FactoryGame/Saved/SaveGames/server  ];then
+    su - steam -c "mkdir -p ~/.config/Epic/FactoryGame/Saved/SaveGames/server"
+fi
 
 su - steam -c "echo "存档位置为："`pwd`"
 echo "创建启动脚本"
@@ -156,7 +186,7 @@ ExecStart=/home/steam/SatisfactoryDedicatedServer/start_server.sh
 WantedBy=multi-user.target
 EOF
 
-systemctl enable satisfactory.service
+systemctl enable satisfactory.service >> $opath 2>&1
 systemctl start satisfactory.service
 echo "安装完成！游戏服务已经启动！"
 echo "安装目录为："$fileDir
