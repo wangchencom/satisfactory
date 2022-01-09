@@ -124,7 +124,7 @@ fi
 #这里有打印信息
 su - steam -c "wget -P ~/steamcmd https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" >> $opath 2>&1
 #解压文件
-su - steam -c "tar -zxvf ~/steamcmd/steamcmd_linux.tar.gz -C ~/steamcmd"
+su - steam -c "tar -zxvf ~/steamcmd/steamcmd_linux.tar.gz -C ~/steamcmd" >> $opath 2>&1
 #删除下载的压缩包
 su - steam -c "rm -f ~/steamcmd/steamcmd_linux.tar.gz"
 #运行steamCMD安装
