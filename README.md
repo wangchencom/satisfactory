@@ -10,10 +10,14 @@
 
 * centos7.9
 * centos8
+* debian9
 * debian10
 * ubuntu18.04
+* Ubuntu 20.04
 
 理论可以在所有linux系统运行！
+
+**提示**：非国内外大厂售卖的vps自带的系统镜像可能存在不纯净等问题，如果使用脚本后（有时网络问题会导致脚本安装失效，重试即可），发现您的游戏服务运行状态正常，请自行在网络寻找dd脚本对服务器进行重新安装系统操作（更换纯净系统等等操作）
 
 ***
 
@@ -62,27 +66,27 @@ centos7:
 
 ```bash
 #国外服务器使用
-wget https://github.com/yingyi666/satisfactory/raw/main/satisfactory_c7.sh &&chmod +x satisfactory_c7.sh&& ./satisfactory_c7.sh
+bash <(wget -qO- https://github.com/yingyi666/satisfactory/raw/main/satisfactory_c7.sh)
 #国内服务器使用
-wget https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@main/satisfactory_c7.sh &&chmod +x satisfactory_c7.sh&& ./satisfactory_c7.sh
+bash <(wget -qO- https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@main/satisfactory_c7.sh)
 ```
 
 centos8:
 
 ```bash
 #国外服务器使用
-wget https://github.com/yingyi666/satisfactory/raw/main/satisfactory_c8.sh &&chmod +x satisfactory_c8.sh&& ./satisfactory_c8.sh
+bash <(wget -qO- https://github.com/yingyi666/satisfactory/raw/main/satisfactory_c8.sh)
 #国内服务器使用
-wget https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@main/satisfactory_c8.sh &&chmod +x satisfactory_c8.sh&& ./satisfactory_c8.sh
+bash <(wget -qO- https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@main/satisfactory_c8.sh)
 ```
 
 ubuntu / debian:
 
 ```bash
 #国外服务器使用
-wget https://github.com/yingyi666/satisfactory/raw/main/satisfactory_d.sh &&chmod +x satisfactory_d.sh&& ./satisfactory_d.sh
+bash <(wget -qO- https://github.com/yingyi666/satisfactory/raw/main/satisfactory_d.sh)
 #国内服务器使用
-wget https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@main/satisfactory_d.sh &&chmod +x satisfactory_d.sh&& ./satisfactory_d.sh
+bash <(wget -qO- https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@main/satisfactory_d.sh)
 ```
 
 #### 操作命令
