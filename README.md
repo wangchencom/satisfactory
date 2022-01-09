@@ -7,9 +7,7 @@
 本脚本为幸福工厂（satisfactory）私人服务器（ea版本）一键部署脚本！
 
 ---
-
 注意：这是另外一个分支，该分支和main分支不同，主分支的脚本错误信息会直接输出在控制台上，本分支会将打印信息输出到`/home/satisfactory_output.log`文件中，更加推荐使用本分支的脚本进行安装，错误容易抓取，同时不用看满屏幕的安装信息😃
-
 ---
 
 以下linux系统以经过测试：
@@ -68,6 +66,10 @@
 
 #### 安装过程
 
+##### 版本一
+
+注意：该版本会将信息直接输出到控制台，如果你对linux使用有所了解，使用该版本更容易安装
+
 centos7:
 
 ```bash
@@ -94,6 +96,44 @@ bash <(wget -qO- https://github.com/yingyi666/satisfactory/raw/main/satisfactory
 #国内服务器使用
 bash <(wget -qO- https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@main/satisfactory_d.sh)
 ```
+
+##### 版本二
+
+注意：该版本会将信息输出到`/home/satisfactory_output.log`，如果你未使用过linux或者只是想安装一个游戏服务器来玩玩，请使用该版本！！！
+
+想要获取输出日志，可以使用以下命令：
+
+```bash
+cat /home/satisfactory_output.log
+```
+
+centos7:
+
+```bash
+#国外服务器使用
+bash <(wget -qO- https://github.com/yingyi666/satisfactory/raw/dev/satisfactory_c7.sh)
+#国内服务器使用
+bash <(wget -qO- https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@dev/satisfactory_c7.sh)
+```
+
+centos8:
+
+```bash
+#国外服务器使用
+bash <(wget -qO- https://github.com/yingyi666/satisfactory/raw/dev/satisfactory_c8.sh)
+#国内服务器使用
+bash <(wget -qO- https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@dev/satisfactory_c8.sh)
+```
+
+ubuntu / debian:
+
+```bash
+#国外服务器使用
+bash <(wget -qO- https://github.com/yingyi666/satisfactory/raw/dev/satisfactory_d.sh)
+#国内服务器使用
+bash <(wget -qO- https://cdn.jsdelivr.net/gh/yingyi666/satisfactory@dev/satisfactory_d.sh)
+```
+
 
 #### 操作命令
 
