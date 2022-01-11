@@ -12,7 +12,7 @@ root_need() {
 #交换分区函数
 swap_make() {
     #使用dd命令创建名为swapfile 的swap交换文件
-    dd  if=/dev/zero  of=/var/swapfile  bs=1024  count=4194304 
+    dd  if=/dev/zero  of=/var/swapfile  bs=1024  count=6291456 
     #对交换文件格式化并转换为swap分区
     mkswap  /var/swapfile
     #添加权限
